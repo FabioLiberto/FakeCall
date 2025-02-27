@@ -1,5 +1,6 @@
 package ch.zli.fl.fakecall.ui.screen
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +20,12 @@ import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,9 +33,16 @@ import androidx.navigation.NavController
 import ch.zli.fl.fakecall.Settings
 import ch.zli.fl.fakecall.data.AcceptedCall
 import ch.zli.fl.fakecall.data.IncomingCall
+import ch.zli.fl.fakecall.service.RingtoneVibrationService
 
 @Composable
 fun IncomingCallScreen(navController: NavController, incomingCall: IncomingCall) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        context.startService(Intent(context, RingtoneVibrationService::class.java))
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,6 +95,7 @@ fun IncomingCallScreen(navController: NavController, incomingCall: IncomingCall)
                         modifier = Modifier
                             .size(28.dp)
                             .clickable {
+                                context.stopService(Intent(context, RingtoneVibrationService::class.java))
                                 navController.navigate(Settings)
                             },
                     )
@@ -116,6 +127,7 @@ fun IncomingCallScreen(navController: NavController, incomingCall: IncomingCall)
                         modifier = Modifier
                             .size(28.dp)
                             .clickable {
+                                context.stopService(Intent(context, RingtoneVibrationService::class.java))
                                 navController.navigate(AcceptedCall(incomingCall.caller))
                             },
                     )
