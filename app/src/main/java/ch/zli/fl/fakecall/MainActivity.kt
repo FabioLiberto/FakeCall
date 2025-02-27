@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import ch.zli.fl.fakecall.ui.screen.SettingsScreen
 import ch.zli.fl.fakecall.ui.theme.FakeCallTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FakeCallTheme {
-                SettingsScreen()
+                AppNavigation()
             }
         }
     }

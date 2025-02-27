@@ -36,14 +36,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import java.util.Calendar
 
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navController: NavController) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     var nextCallTime by remember {
@@ -248,6 +250,16 @@ fun SettingsScreen() {
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Preview",
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable {
+                    navController.navigate("acceptedCall")
+                },
+            )
         }
     }
 }
