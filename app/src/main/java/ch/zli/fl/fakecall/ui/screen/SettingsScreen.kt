@@ -152,6 +152,54 @@ fun SettingsScreen() {
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column() {
+                Text(
+                    text = "Ringtone",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+
+                var mExpanded by remember { mutableStateOf(false) }
+                val ringtones = listOf("Default", "Marimba", "Pixel Sounds", "Chimey Phone")
+                var selectedRingtone by remember { mutableStateOf(ringtones.firstOrNull() ?: "") }
+
+                Box {
+                    OutlinedTextField(
+                        value = selectedRingtone,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { mExpanded = true },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Dropdown Arrow",
+                                modifier = Modifier.clickable { mExpanded = true },
+                            )
+                        },
+                    )
+
+                    DropdownMenu(
+                        expanded = mExpanded,
+                        onDismissRequest = { mExpanded = false },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        ringtones.forEach { user ->
+                            DropdownMenuItem(
+                                text = { Text(user) },
+                                onClick = {
+                                    selectedRingtone = user
+                                    mExpanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
