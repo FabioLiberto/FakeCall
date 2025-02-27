@@ -1,6 +1,7 @@
 package ch.zli.fl.fakecall.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,9 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun AcceptedCallScreen() {
+fun AcceptedCallScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +93,6 @@ fun AcceptedCallScreen() {
                     )
                 }
 
-                // End call button
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -104,7 +105,10 @@ fun AcceptedCallScreen() {
                         imageVector = Icons.Filled.CallEnd,
                         contentDescription = "End Call",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(24.dp)
+                            .clickable {
+                                navController.navigate("settings")
+                            },
                     )
                 }
 

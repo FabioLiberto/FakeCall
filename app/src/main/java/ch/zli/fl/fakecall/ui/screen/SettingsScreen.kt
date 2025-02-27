@@ -257,7 +257,7 @@ fun SettingsScreen(navController: NavController) {
                 text = "Preview",
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable {
-                    navController.navigate("acceptedCall")
+                    navController.navigate("incomingCall")
                 },
             )
         }

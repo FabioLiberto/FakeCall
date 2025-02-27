@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ch.zli.fl.fakecall.ui.screen.AcceptedCallScreen
+import ch.zli.fl.fakecall.ui.screen.IncomingCallScreen
 import ch.zli.fl.fakecall.ui.screen.SettingsScreen
 
 @Composable
@@ -14,6 +15,7 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "settings") {
         composable("settings") { SettingsScreen(navController) }
-        composable("acceptedCall") { AcceptedCallScreen() }
+        composable("incomingCall") { IncomingCallScreen(navController) }
+        composable("acceptedCall") { AcceptedCallScreen(navController) }
     }
 }
