@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import ch.zli.fl.fakecall.Settings
 import ch.zli.fl.fakecall.data.AcceptedCall
 import kotlinx.coroutines.delay
 
@@ -135,7 +134,7 @@ fun AcceptedCallScreen(navController: NavController, acceptedCall: AcceptedCall)
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-                                navController.navigate(Settings)
+                                navController.navigate("settings")
                             },
                     )
                 }

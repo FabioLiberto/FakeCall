@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import ch.zli.fl.fakecall.Settings
 import ch.zli.fl.fakecall.data.AcceptedCall
 import ch.zli.fl.fakecall.data.IncomingCall
 import ch.zli.fl.fakecall.service.RingtoneVibrationService
@@ -96,7 +95,7 @@ fun IncomingCallScreen(navController: NavController, incomingCall: IncomingCall)
                             .size(28.dp)
                             .clickable {
                                 context.stopService(Intent(context, RingtoneVibrationService::class.java))
-                                navController.navigate(Settings)
+                                navController.navigate("settings")
                             },
                     )
                 }

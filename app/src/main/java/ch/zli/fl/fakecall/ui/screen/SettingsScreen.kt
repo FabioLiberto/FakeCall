@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ch.zli.fl.fakecall.data.IncomingCall
+import ch.zli.fl.fakecall.service.IncomingCallScheduler
 import ch.zli.fl.fakecall.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,6 +91,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                                 true,
                             )
                             timePicker.show()
+                            IncomingCallScheduler().scheduleIncomingCall(context, selectedCaller)
                         }
                         .padding(8.dp)
                         .width(80.dp),
