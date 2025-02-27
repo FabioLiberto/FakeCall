@@ -30,7 +30,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-androidx-compose-runtime = {group= "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtime"}
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtime" }
+androidx-glance = { group = "androidx.glance", name = "glance-appwidget", version = "1.1.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
