@@ -38,10 +38,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import ch.zli.fl.fakecall.Settings
+import ch.zli.fl.fakecall.data.AcceptedCall
 import kotlinx.coroutines.delay
 
 @Composable
-fun AcceptedCallScreen(navController: NavController) {
+fun AcceptedCallScreen(navController: NavController, acceptedCall: AcceptedCall) {
     var seconds by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
@@ -62,7 +64,7 @@ fun AcceptedCallScreen(navController: NavController) {
                 .padding(top = 120.dp),
         ) {
             Text(
-                text = "Dad",
+                text = acceptedCall.caller,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -133,7 +135,7 @@ fun AcceptedCallScreen(navController: NavController) {
                         modifier = Modifier
                             .size(24.dp)
                             .clickable {
-                                navController.navigate("settings")
+                                navController.navigate(Settings)
                             },
                     )
                 }

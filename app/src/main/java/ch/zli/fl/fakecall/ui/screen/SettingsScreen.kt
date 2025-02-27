@@ -1,6 +1,5 @@
 package ch.zli.fl.fakecall.ui.screen
 
-import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +25,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,23 +41,26 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import java.util.Calendar
+import ch.zli.fl.fakecall.data.IncomingCall
+import ch.zli.fl.fakecall.viewmodel.SettingsViewModel
 
-@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-    var nextCallTime by remember {
-        mutableStateOf(
-            String.format(
-                "%02d:%02d",
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-            ),
-        )
+
+    LaunchedEffect(Unit) {
+        viewModel.loadRingtones(context)
+        viewModel.loadVibrations()
     }
+
+    val nextCallTime by viewModel.nextCallTime.collectAsState()
+    val selectedCaller by viewModel.selectedCaller.collectAsState()
+    val selectedRingtone by viewModel.selectedRingtone.collectAsState()
+    val selectedVibration by viewModel.selectedVibration.collectAsState()
+    val callers by viewModel.callers.collectAsState()
+    val ringtones by viewModel.ringtones.collectAsState()
+    val vibrations by viewModel.vibrations.collectAsState()
 
     Scaffold(
         topBar = {
@@ -84,13 +88,15 @@ fun SettingsScreen(navController: NavController) {
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.LightGray)
                         .clickable {
+                            val (hour, minute) = nextCallTime.split(":").map { it.toInt() }
+
                             val timePicker = TimePickerDialog(
                                 context,
                                 { _, hour: Int, minute: Int ->
-                                    nextCallTime = String.format("%02d:%02d", hour, minute)
+                                    viewModel.updateNextCallTime(hour, minute)
                                 },
-                                calendar.get(Calendar.HOUR_OF_DAY),
-                                calendar.get(Calendar.MINUTE),
+                                hour,
+                                minute,
                                 true,
                             )
                             timePicker.show()
@@ -109,147 +115,30 @@ fun SettingsScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Column() {
-                Text(
-                    text = "Calling Person",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
-
-                var mExpanded by remember { mutableStateOf(false) }
-                val users = listOf("dad", "mum")
-                var selectedUser by remember { mutableStateOf(users.firstOrNull() ?: "") }
-
-                Box {
-                    OutlinedTextField(
-                        value = selectedUser,
-                        onValueChange = {},
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { mExpanded = true },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Dropdown Arrow",
-                                modifier = Modifier.clickable { mExpanded = true },
-                            )
-                        },
-                    )
-
-                    DropdownMenu(
-                        expanded = mExpanded,
-                        onDismissRequest = { mExpanded = false },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        users.forEach { user ->
-                            DropdownMenuItem(
-                                text = { Text(user) },
-                                onClick = {
-                                    selectedUser = user
-                                    mExpanded = false
-                                },
-                            )
-                        }
-                    }
-                }
-            }
+            DropdownSelection(
+                label = "Calling Person",
+                selectedItem = selectedCaller,
+                items = callers,
+                onItemSelected = { viewModel.setSelectedCaller(it) },
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Column() {
-                Text(
-                    text = "Ringtone",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
-
-                var mExpanded by remember { mutableStateOf(false) }
-                val ringtones = listOf("Default", "Marimba", "Pixel Sounds", "Chimey Phone")
-                var selectedRingtone by remember { mutableStateOf(ringtones.firstOrNull() ?: "") }
-
-                Box {
-                    OutlinedTextField(
-                        value = selectedRingtone,
-                        onValueChange = {},
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { mExpanded = true },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Dropdown Arrow",
-                                modifier = Modifier.clickable { mExpanded = true },
-                            )
-                        },
-                    )
-
-                    DropdownMenu(
-                        expanded = mExpanded,
-                        onDismissRequest = { mExpanded = false },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        ringtones.forEach { ringtone ->
-                            DropdownMenuItem(
-                                text = { Text(ringtone) },
-                                onClick = {
-                                    selectedRingtone = ringtone
-                                    mExpanded = false
-                                },
-                            )
-                        }
-                    }
-                }
-            }
+            DropdownSelection(
+                label = "Ringtone",
+                selectedItem = selectedRingtone,
+                items = ringtones,
+                onItemSelected = { viewModel.setSelectedRingtone(it) },
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Column() {
-                Text(
-                    text = "Vibration",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
-
-                var mExpanded by remember { mutableStateOf(false) }
-                val vibrations = listOf("Steady Vibration", "Double Pulse", "Heartbeat Pattern")
-                var selectedVibration by remember { mutableStateOf(vibrations.firstOrNull() ?: "") }
-
-                Box {
-                    OutlinedTextField(
-                        value = selectedVibration,
-                        onValueChange = {},
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { mExpanded = true },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Dropdown Arrow",
-                                modifier = Modifier.clickable { mExpanded = true },
-                            )
-                        },
-                    )
-
-                    DropdownMenu(
-                        expanded = mExpanded,
-                        onDismissRequest = { mExpanded = false },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        vibrations.forEach { vibration ->
-                            DropdownMenuItem(
-                                text = { Text(vibration) },
-                                onClick = {
-                                    selectedVibration = vibration
-                                    mExpanded = false
-                                },
-                            )
-                        }
-                    }
-                }
-            }
+            DropdownSelection(
+                label = "Vibration",
+                selectedItem = selectedVibration,
+                items = vibrations,
+                onItemSelected = { viewModel.setSelectedVibration(it) },
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -257,9 +146,67 @@ fun SettingsScreen(navController: NavController) {
                 text = "Preview",
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable {
-                    navController.navigate("incomingCall")
+                    navController.navigate(
+                        IncomingCall(
+                            selectedCaller,
+                            selectedRingtone,
+                            viewModel.selectedVibration.value,
+                        ),
+                    )
                 },
             )
+        }
+    }
+}
+
+@Composable
+fun DropdownSelection(
+    label: String,
+    selectedItem: String?,
+    items: List<String>,
+    onItemSelected: (String) -> Unit,
+) {
+    Column {
+        Text(
+            text = label,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+
+        var mExpanded by remember { mutableStateOf(false) }
+
+        Box {
+            OutlinedTextField(
+                value = selectedItem ?: "",
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { mExpanded = true },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Dropdown Arrow",
+                        modifier = Modifier.clickable { mExpanded = true },
+                    )
+                },
+            )
+
+            DropdownMenu(
+                expanded = mExpanded,
+                onDismissRequest = { mExpanded = false },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                items.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(item) },
+                        onClick = {
+                            onItemSelected(item)
+                            mExpanded = false
+                        },
+                    )
+                }
+            }
         }
     }
 }

@@ -27,9 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import ch.zli.fl.fakecall.Settings
+import ch.zli.fl.fakecall.data.AcceptedCall
+import ch.zli.fl.fakecall.data.IncomingCall
 
 @Composable
-fun IncomingCallScreen(navController: NavController) {
+fun IncomingCallScreen(navController: NavController, incomingCall: IncomingCall) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +54,7 @@ fun IncomingCallScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Dad",
+                text = incomingCall.caller,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -79,9 +82,10 @@ fun IncomingCallScreen(navController: NavController) {
                         imageVector = Icons.Default.CallEnd,
                         contentDescription = "Decline Call",
                         tint = Color.White,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .size(28.dp)
                             .clickable {
-                                navController.navigate("settings")
+                                navController.navigate(Settings)
                             },
                     )
                 }
@@ -112,7 +116,7 @@ fun IncomingCallScreen(navController: NavController) {
                         modifier = Modifier
                             .size(28.dp)
                             .clickable {
-                                navController.navigate("acceptedCall")
+                                navController.navigate(AcceptedCall(incomingCall.caller))
                             },
                     )
                 }
