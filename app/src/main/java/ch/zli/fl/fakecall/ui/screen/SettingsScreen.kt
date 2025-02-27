@@ -188,11 +188,59 @@ fun SettingsScreen() {
                         onDismissRequest = { mExpanded = false },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        ringtones.forEach { user ->
+                        ringtones.forEach { ringtone ->
                             DropdownMenuItem(
-                                text = { Text(user) },
+                                text = { Text(ringtone) },
                                 onClick = {
-                                    selectedRingtone = user
+                                    selectedRingtone = ringtone
+                                    mExpanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column() {
+                Text(
+                    text = "Vibration",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+
+                var mExpanded by remember { mutableStateOf(false) }
+                val vibrations = listOf("Steady Vibration", "Double Pulse", "Heartbeat Pattern")
+                var selectedVibration by remember { mutableStateOf(vibrations.firstOrNull() ?: "") }
+
+                Box {
+                    OutlinedTextField(
+                        value = selectedVibration,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { mExpanded = true },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Dropdown Arrow",
+                                modifier = Modifier.clickable { mExpanded = true },
+                            )
+                        },
+                    )
+
+                    DropdownMenu(
+                        expanded = mExpanded,
+                        onDismissRequest = { mExpanded = false },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        vibrations.forEach { vibration ->
+                            DropdownMenuItem(
+                                text = { Text(vibration) },
+                                onClick = {
+                                    selectedVibration = vibration
                                     mExpanded = false
                                 },
                             )
