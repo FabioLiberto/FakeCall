@@ -24,8 +24,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        settingsViewModel.loadRingtones(this)
-        settingsViewModel.loadVibrations()
         setContent {
             FakeCallTheme {
                 val navController = rememberNavController()

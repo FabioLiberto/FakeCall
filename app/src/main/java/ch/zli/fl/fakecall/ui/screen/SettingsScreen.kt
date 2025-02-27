@@ -25,7 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,18 +48,9 @@ import ch.zli.fl.fakecall.viewmodel.SettingsViewModel
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.loadRingtones(context)
-        viewModel.loadVibrations()
-    }
-
     val nextCallTime by viewModel.nextCallTime.collectAsState()
     val selectedCaller by viewModel.selectedCaller.collectAsState()
-    val selectedRingtone by viewModel.selectedRingtone.collectAsState()
-    val selectedVibration by viewModel.selectedVibration.collectAsState()
     val callers by viewModel.callers.collectAsState()
-    val ringtones by viewModel.ringtones.collectAsState()
-    val vibrations by viewModel.vibrations.collectAsState()
 
     Scaffold(
         topBar = {
@@ -124,24 +114,6 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            DropdownSelection(
-                label = "Ringtone",
-                selectedItem = selectedRingtone,
-                items = ringtones,
-                onItemSelected = { viewModel.setSelectedRingtone(it) },
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            DropdownSelection(
-                label = "Vibration",
-                selectedItem = selectedVibration,
-                items = vibrations,
-                onItemSelected = { viewModel.setSelectedVibration(it) },
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
             Text(
                 text = "Preview",
                 textDecoration = TextDecoration.Underline,
@@ -149,8 +121,6 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     navController.navigate(
                         IncomingCall(
                             selectedCaller,
-                            selectedRingtone,
-                            viewModel.selectedVibration.value,
                         ),
                     )
                 },
