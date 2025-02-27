@@ -1,5 +1,6 @@
 package ch.zli.fl.fakecall.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,11 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,25 +38,45 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 
 @Composable
 fun AcceptedCallScreen(navController: NavController) {
+    var seconds by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000L)
+            seconds++
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
     ) {
-        Text(
-            text = "Dad",
+        Box(
             modifier = Modifier
-                .padding(top = 120.dp)
-                .align(Alignment.TopCenter),
-            fontSize = 36.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        )
+                .align(Alignment.TopCenter)
+                .padding(top = 120.dp),
+        ) {
+            Text(
+                text = "Dad",
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+            )
+            Text(
+                text = formatTime(seconds),
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .align(Alignment.Center),
+                fontSize = 16.sp,
+                color = Color.Black,
+            )
+        }
 
-        // Bottom controls
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -65,7 +91,6 @@ fun AcceptedCallScreen(navController: NavController) {
                     .padding(bottom = 24.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Call control buttons
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -105,7 +130,8 @@ fun AcceptedCallScreen(navController: NavController) {
                         imageVector = Icons.Filled.CallEnd,
                         contentDescription = "End Call",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                             .clickable {
                                 navController.navigate("settings")
                             },
@@ -148,4 +174,11 @@ fun CallButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: Str
             textAlign = TextAlign.Center,
         )
     }
+}
+
+@SuppressLint("DefaultLocale")
+fun formatTime(seconds: Int): String {
+    val minutes = seconds / 60
+    val secs = seconds % 60
+    return String.format("%02d:%02d", minutes, secs)
 }
