@@ -8,12 +8,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,7 +47,13 @@ fun SettingsScreen() {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     var nextCallTime by remember {
-        mutableStateOf(String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)))
+        mutableStateOf(
+            String.format(
+                "%02d:%02d",
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+            ),
+        )
     }
 
     Scaffold(
@@ -88,6 +102,54 @@ fun SettingsScreen() {
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column() {
+                Text(
+                    text = "Calling Person",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+
+                var mExpanded by remember { mutableStateOf(false) }
+                val users = listOf("dad", "mum")
+                var selectedUser by remember { mutableStateOf(users.firstOrNull() ?: "") }
+
+                Box {
+                    OutlinedTextField(
+                        value = selectedUser,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { mExpanded = true },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Dropdown Arrow",
+                                modifier = Modifier.clickable { mExpanded = true },
+                            )
+                        },
+                    )
+
+                    DropdownMenu(
+                        expanded = mExpanded,
+                        onDismissRequest = { mExpanded = false },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        users.forEach { user ->
+                            DropdownMenuItem(
+                                text = { Text(user) },
+                                onClick = {
+                                    selectedUser = user
+                                    mExpanded = false
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }
