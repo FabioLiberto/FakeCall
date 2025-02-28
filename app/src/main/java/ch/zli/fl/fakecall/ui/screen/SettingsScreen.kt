@@ -111,7 +111,9 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 label = "Calling Person",
                 selectedItem = selectedCaller,
                 items = callers,
-                onItemSelected = { viewModel.setSelectedCaller(it) },
+                onItemSelected = {
+                    viewModel.setSelectedCaller(it, context)
+                },
             )
 
             Spacer(modifier = Modifier.height(24.dp))

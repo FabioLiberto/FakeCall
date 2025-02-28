@@ -15,11 +15,15 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ch.zli.fl.fakecall.data.AcceptedCall
+import ch.zli.fl.fakecall.data.DataStoreManager
 import ch.zli.fl.fakecall.data.IncomingCall
 import ch.zli.fl.fakecall.ui.screen.AcceptedCallScreen
 import ch.zli.fl.fakecall.ui.screen.IncomingCallScreen
@@ -27,30 +31,34 @@ import ch.zli.fl.fakecall.ui.screen.SettingsScreen
 import ch.zli.fl.fakecall.ui.theme.FakeCallTheme
 import ch.zli.fl.fakecall.viewmodel.CallViewModel
 import ch.zli.fl.fakecall.viewmodel.SettingsViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val settingsViewModel by lazy {
+        SettingsViewModel(applicationContext)
+    }
     private val callViewModel: CallViewModel by viewModels()
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         hasCheckedOverlayPermission = false
-        handleIntent(intent)
 
         setContent {
             FakeCallTheme {
-                val navController = rememberNavController()
+                navController = rememberNavController()
                 val callerName by callViewModel.callerName.observeAsState()
 
                 LaunchedEffect(callerName) {
                     callerName?.let {
-                        navController.navigate(IncomingCall(it))
+                        navigateToIncomingCall(it)
                     }
                 }
 
-                NavHost(navController, startDestination = "settings") {
+                NavHost(navController as NavHostController, startDestination = "settings") {
                     composable("settings") { SettingsScreen(navController, settingsViewModel) }
                     composable<IncomingCall> { backStackEntry ->
                         val incomingCall: IncomingCall = backStackEntry.toRoute()
@@ -63,21 +71,40 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
 
         val uri = intent.data
-        val hasIncomingCall = uri?.getQueryParameter("caller") != null
-        if (hasIncomingCall) {
-            hasCheckedOverlayPermission = false
+        val caller = uri?.getQueryParameter("caller")
+
+        if (!caller.isNullOrEmpty()) {
+            callViewModel.setCallerName(caller)
+            navigateToIncomingCall(caller)
         }
-        handleIntent(intent)
+    }
+
+    private fun navigateToIncomingCall(caller: String) {
+        navController.navigate(IncomingCall(caller)) {
+            popUpTo("settings") { inclusive = true }
+            launchSingleTop = true
+        }
     }
 
     override fun onResume() {
         super.onResume()
+
+        val dataStore = DataStoreManager(applicationContext)
+
+        lifecycleScope.launch {
+            val caller = dataStore.selectedCaller.first()
+            settingsViewModel.setSelectedCaller(caller, applicationContext)
+        }
+
         if (!hasCheckedOverlayPermission) {
             checkOverlayPermission(intent)
         }
@@ -113,9 +140,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        if (intent == null) {
-            return
-        }
+        if (intent == null) return
 
         val uri = intent.data
         val callerName: String? = uri?.getQueryParameter("caller") ?: intent.getStringExtra("callerName")
