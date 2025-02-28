@@ -83,15 +83,20 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
                             val timePicker = TimePickerDialog(
                                 context,
-                                { _, hour: Int, minute: Int ->
-                                    viewModel.updateNextCallTime(hour, minute)
+                                { _, selectedHour: Int, selectedMinute: Int ->
+                                    viewModel.updateNextCallTime(selectedHour, selectedMinute)
+                                    IncomingCallScheduler().scheduleIncomingCall(
+                                        context,
+                                        selectedCaller,
+                                        selectedHour,
+                                        selectedMinute
+                                    )
                                 },
                                 hour,
                                 minute,
                                 true,
                             )
                             timePicker.show()
-                            IncomingCallScheduler().scheduleIncomingCall(context, selectedCaller)
                         }
                         .padding(8.dp)
                         .width(80.dp),
