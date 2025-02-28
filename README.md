@@ -10,3 +10,6 @@ Zudem wollte ich dem Benutzer die Möglichkeit bieten, dass er über einen Short
 
 ## Weitere Infos
 Wenn die App gestartet wird, erscheint eine Fenster "Über anderen App anzeigen". Dort muss die FakeCall-App gesucht werden und die Erlaubnis muss erteilt werden, dass die App über andere Apps angezeigt werden darf.
+
+## Verwendung von AI
+Ich habe in meinem Projekt ChatGPT o3-mini-high, 4o und Claude 3.7 verwendet. Ich habe primär AI verwendet um einen Lösungsansatz zu generieren, habe aber meistens den Code selst geschrieben. Einzig die HTML-Seite, die einen App-Store Eintrag simulieren soll, habe ich vollständig mit Claude generieren lassen. Zudem habe ich Teile der Logik für den Timer (```IncomingCallReceiver``` & ```IncomingCallService```, sprich, dass der Anruf angezeigt wird, auch wenn die App im Hintergrund ist, von AI übernommen, da die Logik sehr komplex wurde und ich keinen einfachen Ansatz gefunden habe.
